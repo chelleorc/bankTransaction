@@ -1,0 +1,452 @@
+/*LaToya Anderson
+ * CISC 1115
+ * March 28, 2018
+ * This program does bank transactions and accepts and 
+ * deletes accounts as requested
+ */
+import java.util.Scanner;
+import java.io.*;
+
+public class BankAcct {
+
+	public static void main(String[] args)throws IOException{
+		
+		//Character variable for bank transactions
+		char bankTrans;
+		String str;
+		boolean notDone = true;
+		
+		//holds total number of accounts
+		int num_acct;
+		//returns total number of accounts
+		int maxNum=0;
+		//size constant for array
+		int MAX_NUM = 50;
+		
+		//Array for account numbers
+		int[] account = new int[MAX_NUM];
+		//Array for balances
+		double[] balance = new double[MAX_NUM];
+		
+		//Method reads in accounts and balances into array
+		//and returns total number of accounts
+		num_acct = readAccts(account,balance,maxNum);
+		
+		System.out.println("Accounts: " + num_acct);
+		
+		//printAccts(account,balance,maxNum);
+		
+		//Opens Scanner to read in user input
+		Scanner keyboard = new Scanner(System.in);
+		
+		/*loop initiates once transaction is chosen and 
+		checks for valid input, calls method for that transaction,
+		or quits program*/
+		do{
+			//Calls method to prints bank transaction choices
+			menu();
+		
+			//User chooses bank transaction
+			System.out.print("Choose from selection above: ");
+			str = keyboard.next(); 
+			bankTrans = str.charAt(0);
+			
+			//Calls method of chosen transaction
+			switch(bankTrans){
+				case'D':
+				case'd':
+					//method adds deposits to existing bank balance
+					deposit(account,balance,num_acct);
+					break;
+				case'W':
+				case'w':
+					//method withdraws funds from existing bank balance
+					withdrawal(account,balance,num_acct);
+					break;
+				case'B':
+				case'b':
+					//method prints balance if account exists
+					balance(account,balance,num_acct);
+					break;
+				case'N':
+				case'n':
+					//method returns new total number of accounts
+					//if account doesn't already exist
+					num_acct = newAcct(account,balance,num_acct);
+					break;
+				case'X':
+				case'x':
+					num_acct = deleteAcct(account,balance,num_acct);
+					break;
+				//Ends program when finished
+				case'Q':
+				case'q':
+					notDone = quit();
+					System.out.println("You have quit this program.");
+					break;
+				default:
+					System.out.println("This is incorrect.");
+				
+		}
+		
+		
+		}while(notDone);
+		keyboard.close();
+
+	}
+	/*Input - No arguments
+	 * Process - ends program
+	 *Output - Returns false 
+	 */
+	public static boolean quit()
+	{
+	
+		System.out.println("Program has closed.");
+		return false;
+	}
+	
+	/*Input: accnt - an uninitiated array to be 
+	 * 				filled with account numbers
+	 * 		balance - an uninitiated array to be
+	 * 				 filled with account balance
+	 * 		max_accts - an uninitiated datatype int
+	 * 				to return max number of existing 
+	 * 				accounts
+	 * Process: reads account numbers and balance into
+	 * 			parallel arrays and determines their 
+	 * 			total number
+	 * Output: two parallel arrays filled with 
+	 * 			account information, their balances and
+	 * 			returns max_accts - total number of accounts
+	 * 			
+	 */
+	public static int readAccts(int[] accnt,
+			double[] balance, int max_accts)throws IOException
+	{
+		int index = 0;
+		File myFile = new File("/home/latoya/eclipse-"
+				+ "workspace/BankAccount/Accounts.txt");
+		
+		//Creates scanner object to read the input file
+		Scanner inputFile = new Scanner(myFile);
+		
+			//fills acct and balance arrays read in from myFile
+			while(inputFile.hasNext()){
+				accnt[index] = inputFile.nextInt();
+				balance[index] = inputFile.nextDouble();
+				System.out.printf("%d  %.2f\n", accnt[index], balance[index]);
+				index++;
+				max_accts = index;
+			}
+		
+		
+		inputFile.close();
+		return max_accts;
+	}
+	
+	/*Input: no arguments
+	 * Process: prints bank 
+	 * 			transaction menu
+	 * Output: prints bank
+	 * 			transaction menu
+	 */
+	public static void menu() {
+		System.out.println("W - Withdrawal");
+		System.out.println("D - Deposit");
+		System.out.println("N - New account");
+		System.out.println("B - Balance");
+		System.out.println("Q - Quit");
+		System.out.println("X - Delete Account");
+		
+	}
+	
+	/*Input: acctnum - points to address of array account numbers
+	 * 		num_accts - total number of existing accounts
+	 * 		account - receives acctTest and returns index
+	 * 					if it exists
+	 * Process
+	 * Output
+	 * 
+	 */
+	public static int findAcct(int[] acctnum, int num_accts,
+			int account) {
+		//Holds index value if account exists and -1 if 
+		//account doesn't exist
+		int acctExist=0;
+	
+		//Iterates through array to check whether account exists
+		for(int index = 0;index < acctnum.length; index++) {
+			
+			//Tests if account exists
+			if(account == acctnum[index]) {
+				acctExist = index;
+				break;
+			}
+			//Tests if account doesn't exist
+			else if(account != acctnum[index])
+				acctExist = -1;
+		}
+		
+		return acctExist;
+
+	}
+	
+	/*Input: acctnum - array of account numbers
+	 * 		balance - array of balances
+	 * 		num_accts - total number of existing accounts
+	 * Process: Prompts user to input account number
+	 * 			Calls findAcct to check if it exists
+	 * 			If it exists then prompts user to add
+	 * 				deposit which is added to initial balance
+	 * 			If it doesn't exist, prints error message
+	 * Output: Prints new balance if account exists
+	 * 			Prints error message if account doesn't exist
+	 */
+	public static void deposit(int[] acctnum,double[] balance, int num_accts) {
+		//boolean acct_Equal = true;
+		int acct, acctTest;
+		
+		//Create a Scanner object to read user input
+		Scanner keyboard = new Scanner(System.in);
+		
+		//Prompt user for account number
+		System.out.print("Enter account number: ");
+		acctTest = keyboard.nextInt();
+		
+		//if account exists then acctTest receives account index number
+		acct = findAcct(acctnum,num_accts,acctTest);
+		
+		//Adds deposit if return value is index number
+		if(acct != -1) {
+			//Holds users deposit amount
+			double deposit, newBalance;
+			
+			System.out.printf("In deposits method. Account balance %.2f\n", balance[acct]);
+			//Prompt user for deposit amount
+			System.out.print("How much would you like to deposit? ");
+			deposit = keyboard.nextDouble();
+
+			//equation adds deposit to bank balance
+			newBalance = balance[acct] + deposit;
+					
+			System.out.printf("Account number %d  new account "
+					+ "balance: $%.2f", acctnum[acct], newBalance);
+			System.out.println();
+			
+		}
+		
+		else
+			System.out.println(acctTest + " does not exist."); 
+		System.out.println();
+		//keyboard.close();
+	}
+	
+	/*Input: acctnum - array of account numbers
+	 * 		balance - array of balances
+	 * 		num_accts - total number of existing accounts
+	 * Process: Prompts user to input account number
+	 * 			Calls findAcct to check if it exists
+	 * 			If account exists then prompts user to withdraw
+	 * 			 from initial balance
+	 * 			If withdrawal amount is higher than balance,
+	 * 				prints error message and doesn't do withdrawal
+	 * Output: Prints new balance if account exists
+	 * 			Prints error message if account doesn't exist 
+	 * 			Prints error message if withdrawal amount is higher
+	 * 				than account balance
+	 * 
+	 */
+	public static void withdrawal(int[] acctnum, double[] balance, int num_accts) {
+		int acct, acctTest = 0;
+		
+		//Create a Scanner object to read user input
+		Scanner keyboard = new Scanner(System.in);
+		
+		//Prompt user for account number
+		System.out.print("Enter account number: ");
+		acctTest = keyboard.nextInt();
+		
+		//if account exists then acctTest receives account index number
+		acct = findAcct(acctnum,num_accts,acctTest);
+		
+		if(acct != -1) {
+			//Holds users deposit amount
+			double withdrawal, newBalance;
+			
+			System.out.printf("In withdrawal method. Account balance %.2f\n", balance[acct]);
+			
+			//Prompt user for withdrawal amount
+			System.out.print("How much would you like to withdraw? ");
+			withdrawal = keyboard.nextDouble();
+			
+			//Withdraws amount if funds are sufficient
+			if (withdrawal < balance[acct]) {
+				//equation adds deposit to bank balance
+				newBalance = balance[acct] - withdrawal;
+				
+				System.out.printf("Account number %d  new account "
+					+ "balance: $%.2f", acctnum[acct], newBalance);
+				System.out.println();
+			}
+			
+			else 
+				System.out.println("Insufficient funds in: " + acctnum[acct]);
+			System.out.println();
+		}
+		else
+			System.out.println(acctTest + " does not exist.");
+	}
+	
+	/*Input: acctnum - array of account numbers
+	 * 		balance - array of balances
+	 * 		num_accts - total number of existing accounts
+	 * Process: Prompts user to input account number
+	 * 			Calls findAcct to check if it exists
+	 * 			If acccount exists then prints balance
+	 * 			If account doesn't exist, prints error message
+	 * Output: Prints balance if account exists
+	 * 			Prints error message if account doesn't exist 
+	 */
+	public static void balance(int[] acctnum,double[] balance, int num_accts){
+		int acct, acctTest = 0;
+	
+		//Create a Scanner object to read user input
+		Scanner keyboard = new Scanner(System.in);
+	
+		//Prompt user for account number
+		System.out.print("Enter account number: ");
+		acctTest = keyboard.nextInt();
+	
+		//if account exists then acctTest receives account index number
+		acct = findAcct(acctnum,num_accts,acctTest);
+	
+		if(acct != -1) {		
+			System.out.printf("For account number %d "
+				+ "balance is: $%.2f", acctnum[acct],balance[acct]);
+			System.out.println();
+			
+		}
+		else
+			System.out.println(acctTest + " doesn't exist.");
+		System.out.println();
+	}
+	
+	/*Input: acctnum - array of account numbers
+	 * 		balance - array of balances
+	 * 		num_accts - total number of existing accounts
+	 * Process: Prompts user for new account number
+	 * 			Calls findAcct to check if it exists
+	 * 			If account doesn't exists then adds to acctnum array and 
+	 * 				zero balance to balance array
+	 * 			If account exists, prints error message
+	 * Output: Returns updated number of accounts to main
+	 * 			Prints error message if account does exists
+	 * 
+	 */
+	public static int newAcct(int[] acctnum, double[] balance, int num_accts) {
+		
+		//Holds new account number and i
+		int acct, index, acctTest = 0;
+		//Holds user-inputted balance
+		double newBalance = 0.00;
+		
+		//Create a Scanner object to read user input
+		Scanner keyboard = new Scanner(System.in);
+	
+		//Prompt user for new account number
+		System.out.print("Enter new account number: ");
+		acctTest = keyboard.nextInt();
+	
+		//if account exists then acctTest receives account index number
+		acct = findAcct(acctnum,num_accts,acctTest);
+		
+		//Prints error message if account exists
+		if(acct != -1) {		
+			System.out.printf("Error. Account number "
+				+ acctnum[acct] + " already exists.");
+			System.out.println();
+			
+		}
+		else {
+			
+				System.out.println("New balance is $" + newBalance);
+				
+				
+				acctnum[num_accts] = acctTest;
+				balance[num_accts] = newBalance;
+				//System.out.println();
+				//num_accts =+1;
+				for(index = 0; index < num_accts+1; index++) {
+					System.out.println(acctnum[index] + " " + balance[index]);
+					
+			}
+		//Holds new total number of accounts		
+		num_accts = index;
+		//System.out.println(num_accts + " total number of accounts");
+		}
+			
+		System.out.println();
+		return num_accts;
+	}
+	
+	/*Input: acctnum - array of account numbers
+	 * 		balance - array of balances
+	 * 		num_accts - total number of existing accounts
+	 * Process: Prints all accounts and their balances including new accounts
+	 * Output: Prints all accounts and their balances including new accounts
+	 */
+	public static void printArray(int[] acctnum, double[] balance, int num_accts) {
+		//Prints entire array of accounts and their balances
+		for(int index = 0; index < acctnum.length; index++) 
+			System.out.println(acctnum[index] + " " + balance[index]);	
+	}
+
+	/*Input: acctnum - array of account numbers
+	 * 		balance - array of balances
+	 * 		num_accts - total number of existing accounts
+	 * Process: Prompts user to input account number
+	 * 			Calls findAcct to check if it exists
+	 * 			If account exists then prints balance
+	 * 			If account doesn't exist, prints error message
+	 * Output: Prints balance if account exists
+	 * 			Prints error message if account doesn't exist 
+	 */
+	public static int deleteAcct(int[] acctnum, double[] balance, int num_accts) {
+		//boolean acct_Equal = true;
+		int acct, index = 0,acctTest = 0;
+				
+		//Create a Scanner object to read user input
+		Scanner keyboard = new Scanner(System.in);
+				
+		//Prompt user for account number
+		System.out.print("Enter account number: ");
+		acctTest = keyboard.nextInt();
+				
+		//if account exists then acctTest receives account index number
+		acct = findAcct(acctnum,num_accts,acctTest);
+		
+		//Prints error message if account doesn't exist
+		if(acct == -1 ) 
+			System.out.println(acctTest + " does not exist "
+					+ "and cannot be deleted.");
+		
+		//Prints error message if account exists and has a balance
+		else if(balance[acct] != 0.00)
+			System.out.printf("%d has a balance of $%.2f"
+					 + " and cannot be deleted.",acctTest, balance[acct]);
+		
+		//Removes account with zero balance and and assigns updated number
+		//of accounts to num_accts
+		else if(balance[acct] == 0.00){
+			balance[acct] = balance[acct+1];
+			acctnum[acct] = acctnum[acct+1];
+ 			for(index = 0; index < num_accts; index++)
+				System.out.println(acctnum[index] + " " + balance[index]);
+			}
+		num_accts = index-1;
+		
+		System.out.println();
+		return num_accts;		
+	}
+}
+
