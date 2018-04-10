@@ -1,0 +1,155 @@
+Account balances
+1234 2000.00
+4321 132.32
+2345 56.20
+5432 0.00
+3456 90000.19
+7654 679.65
+5678 101.63
+4567 0.00
+
+T is an invalid entry.
+
+Y is an invalid entry.
+
+Transaction Type: Balance
+Account number 1234 
+Balance is: $2000.00
+
+Transaction Type: Balance
+Account: 9999
+Status: Does not exist
+
+Transaction: Deposit
+Account number: 3456
+Account balance $90000.00
+Deposit: $103.45
+New account balance: $90103.45
+
+Transaction: Deposit
+Account number: 7654
+Account balance $679.65
+Deposit: $-32.89
+Status: Invalid deposit amount
+
+Transaction: Deposit
+Account: 8684
+Status: Does not exist.
+
+Transaction: Withdrawal
+Account number: 2345
+Account balance: $56.20
+Withdrawing: $18.00
+New account balance: $38.20
+
+Transaction: Withdrawal
+Account number: 5678
+Account balance: $101.63
+Withdrawal: 0.00
+Status: Invalid amount. Cannot withdraw $0.00
+
+Transaction: Withdrawal
+Account number: 5678
+Account balance: $101.63
+Withdrawal: $200.00
+Status: Insufficient funds
+
+Transaction: Withdrawal
+Account: 6655
+Status: Does not exist.
+
+Transaction: New account
+Account number: 9966
+New account balance: $0.00
+Status: New account created
+
+Transaction: New account
+Account number: 6633
+New account balance: $0.00
+Status: New account created
+
+Transaction: New account
+Account number: 4466
+New account balance: $0.00
+Status: New account created
+
+Transaction: New account
+Account number: 1234
+Account balance: 2000.00
+Status: Error. Account already exists.
+
+Transaction: New account
+Account number: 4321
+Account balance: 132.32
+Status: Error. Account already exists.
+
+Transaction Type: Balance
+Account number 9966 
+Balance is: $0.00
+
+Transaction: Deposit
+Account number: 9966
+Account balance $0.00
+Deposit: $61.00
+New account balance: $61.00
+
+Transaction: Withdrawal
+Account number: 9966
+Account balance: $61.00
+Withdrawal: $-23.00
+Status: Invalid amount. Cannot make a negative withdrawal
+
+Transaction: Deposit
+Account number: 6633
+Account balance $0.00
+Deposit: $1638.00
+New account balance: $1638.00
+
+Transaction: Withdrawal
+Account number: 6633
+Account balance: $1638.00
+Withdrawing: $300.00
+New account balance: $1338.00
+
+Transaction: Deposit
+Account number: 4466
+Account balance $0.00
+Deposit: $0.00
+Status: Invalid deposit.Cannot deposit $0.00
+
+Transaction: Deposit
+Account number: 4466
+Account balance $0.00
+Deposit: $56.38
+New account balance: $56.38
+
+Transaction: Withdrawal
+Account number: 4466
+Account balance: $56.38
+Withdrawal: 0.00
+Status: Invalid amount. Cannot withdraw $0.00
+
+Transaction: Remove account
+Account number: 5432
+Account balance: 0.00
+Status: Account exists. Closed.
+
+Transaction: Remove account
+Account number: 4567
+Account balance: 0.00
+Status: Account exists. Closed.
+
+
+Transactions finished
+
+Final account balances
+1234 2000.00
+4321 132.32
+2345 38.20
+3456 90103.45
+7654 679.65
+5678 101.63
+9966 61.00
+6633 1338.00
+4466 56.38
+
